@@ -1,13 +1,66 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
-  </head>
-  <body>
-    <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
+    <title>Guess Master</title>
+  </head>
+  <body
+    class="bg-gray-900 min-h-screen flex items-center justify-center font-sans"
+  >
+    <section
+      id="game"
+      class="w-[75vw] h-[75vh] bg-gradient-to-br from-gray-800 to-gray-950 border border-blue-500 rounded-xl shadow-2xl flex flex-col items-center justify-center p-6 transition-all"
+    >
+      <!-- Titre stylé -->
+      <h1
+        class="text-4xl text-blue-400 font-bold tracking-wide mb-8 animate-pulse"
+      >
+        GuessMaster [0-100]
+      </h1>
+      <h2 class="text-1xl text-orange">
+        Solution : <span id="cheat">--</span>
+      </h2>
+
+      <!-- Affichage du numéro (carré stylé) -->
+      <div
+        id="display-number"
+        class="w-[25vw] h-[15vh] bg-gray-700 border-2 border-red-500 rounded-lg flex items-center justify-center text-5xl text-red-400 font-mono transition-transform hover:scale-105"
+      >
+        ???
+      </div>
+
+      <!-- Input et bouton -->
+      <div class="mt-10 flex flex-col items-center gap-4">
+        <input
+          type="number"
+          id="input"
+          class="w-[20vw] h-[6vh] bg-transparent border border-zinc-600 rounded-md text-zinc-200 text-2xl text-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all placeholder-zinc-500"
+          placeholder="Ton guess..."
+        />
+      </div>
+
+      <div class="mt-6 flex items-center gap-4">
+        <!-- Texte en ligne -->
+        <div
+          id="feedback"
+          class="text-lg text-zinc-300 flex gap-2 animate-bounce"
+        >
+          <span class="hover:ring-2 ring-blue-500 rounded-full px-2"
+            >Trop haut</span
+          >
+          <span class="hover:ring-2 ring-blue-500 rounded-full px-2"
+            >Trop bas</span
+          >
+          <span class="hover:ring-2 ring-blue-500 rounded-full px-2"
+            >Presque</span
+          >
+          <span class="hover:ring-2 ring-blue-500 rounded-full px-2"
+            >Parfait</span
+          >
+        </div>
+      </div>
+    </section>
   </body>
 </html>
