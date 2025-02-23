@@ -23,7 +23,7 @@ const resetGame = () => {
   tryScore.textContent = tryCount.toString();
   spanScore.textContent = score.toString();
   displayNumber.textContent = "???";
-  theChoice = choice()
+  theChoice = choice();
   //cheat.innerHTML = theChoice.toString(); //cheat
 };
 
@@ -73,11 +73,7 @@ function disableButton() {
 
 function enableInput() {
   input.disabled = false;
-  input.classList.add(
-    "bg-transparent",
-    "text-zinc-200",
-    "border-zinc-600"
-  );
+  input.classList.add("bg-transparent", "text-zinc-200", "border-zinc-600");
   input.classList.remove(
     "disabled:bg-gray-800",
     "disabled:text-zinc-500",
@@ -93,17 +89,13 @@ function disableInput() {
     "disabled:border-gray-700",
     "disabled:cursor-not-allowed"
   );
-  input.classList.remove(
-    "bg-transparent",
-    "text-zinc-200",
-    "border-zinc-600"
-  );
+  input.classList.remove("bg-transparent", "text-zinc-200", "border-zinc-600");
 }
 enableInput();
 
 const arr: number[] = Array.from(Array(101), (_, i) => i);
 const choice = () => chooseNumber();
-let theChoice = choice()
+let theChoice = choice();
 
 let score = 0;
 let tryCount = 0;
@@ -124,24 +116,40 @@ const responseVerify = (value: number): StateResponse | false => {
   else if (isCold) return "cold";
   return false;
 };
-
+console.log(spansDegree[0]);
 const stateManagement = (state: StateResponse) => {
   if (state === "correct") {
     displayNumber.innerHTML = theChoice.toString();
     console.log("Trouvé !");
-    refreshTryScore(100);
+    refreshTryScore(0);
     input.disabled;
     disableInput();
     enableButton();
+    spansDegree[3].classList.add("border-solid", "border-green-500");
+    spansDegree[2].classList.remove("border-solid", "border-yellow-500");
+    spansDegree[1].classList.remove("border-solid", "border-red-500");
+    spansDegree[0].classList.remove("border-solid", "border-blue-500");
   } else if (state === "close") {
     console.log("Presque !", theChoice);
-    refreshTryScore(50);
+    refreshTryScore(10);
+    spansDegree[3].classList.remove("border-solid", "border-green-500");
+    spansDegree[2].classList.add("border-solid", "border-yellow-500");
+    spansDegree[1].classList.remove("border-solid", "border-red-500");
+    spansDegree[0].classList.remove("border-solid", "border-blue-500");
   } else if (state === "hot") {
     console.log("Trop haut !");
-    refreshTryScore(10);
+    refreshTryScore(50);
+    spansDegree[3].classList.remove("border-solid", "border-green-500");
+    spansDegree[2].classList.remove("border-solid", "border-yellow-500");
+    spansDegree[1].classList.add("border-solid", "border-red-500");
+    spansDegree[0].classList.remove("border-solid", "border-blue-500");
   } else if (state === "cold") {
     console.log("Trop bas !");
-    refreshTryScore(10);
+    refreshTryScore(50);
+    spansDegree[3].classList.remove("border-solid", "border-green-500");
+    spansDegree[2].classList.remove("border-solid", "border-yellow-500");
+    spansDegree[1].classList.remove("border-solid", "border-red-500");
+    spansDegree[0].classList.add("border-solid", "border-blue-500");
   }
   return false;
 };
