@@ -1,177 +1,100 @@
+import { resetGame, SCORE, theChoice } from "./../player";
+import type { GuessState } from "./../guess-infos";
+import { GUESS_BORDER_COLOR } from "./../guess-infos";
 import "./style.css";
 import "virtual:uno.css";
-import random from "./utils/random";
+import { domManagement, DOM_ELEMENTS } from "./utils/dom";
 
-const displayNumber: HTMLDivElement =
-  document.querySelector("#display-number")!;
-const cheat: HTMLSpanElement = document.querySelector("#cheat")!;
-const input: HTMLInputElement = document.querySelector(
-  "input"
-) as HTMLInputElement;
-const spansDegree: NodeListOf<HTMLSpanElement> =
-  document.querySelectorAll("#feedback > span")!;
-const tryScore: HTMLSpanElement = document.querySelector("#try")!;
-const spanScore: HTMLSpanElement = document.querySelector("#score")!;
-const resetBtn: HTMLButtonElement = document.querySelector("#reset")!;
+// DOM_ELEMENTS.cheat.innerHTML = theChoice.toString(); //cheat
+// if (theChoice) DOM_ELEMENTS.cheat.innerHTML = theChoice.toString(); //cheat
 
-const chooseNumber = (): number => random(arr);
-
-const resetGame = () => {
-  input.value = "";
-  score = 0;
-  tryCount = 0;
-  tryScore.textContent = tryCount.toString();
-  spanScore.textContent = score.toString();
-  displayNumber.textContent = "???";
-  theChoice = choice();
-  //cheat.innerHTML = theChoice.toString(); //cheat
-};
 
 const refreshTryScore = (points: number): void => {
-  score += points;
-  ++tryCount;
-  tryScore.textContent = tryCount.toString();
-  spanScore.textContent = score.toString();
+  SCORE.current += points;
+  ++SCORE.tryCount;
+  DOM_ELEMENTS.tryScore.textContent = SCORE.tryCount.toString();
+  DOM_ELEMENTS.spanScore.textContent = SCORE.current.toString();
 };
 
-function enableButton() {
-  resetBtn.disabled = false;
-  resetBtn.classList.add(
-    "bg-blue-600",
-    "text-white",
-    "border-blue-500",
-    "hover:bg-blue-700",
-    "hover:border-blue-600",
-    "cursor-pointer",
-    "active:bg-blue-800"
-  );
-  resetBtn.classList.remove(
-    "disabled:bg-gray-800",
-    "disabled:text-zinc-500",
-    "disabled:border-gray-700",
-    "disabled:cursor-not-allowed"
-  );
-}
-function disableButton() {
-  resetBtn.disabled = true;
-  resetBtn.classList.add(
-    "disabled:bg-gray-800",
-    "disabled:text-zinc-500",
-    "disabled:border-gray-700",
-    "disabled:cursor-not-allowed"
-  );
-  resetBtn.classList.remove(
-    "bg-blue-600",
-    "text-white",
-    "border-blue-500",
-    "hover:bg-blue-700",
-    "hover:border-blue-600",
-    "cursor-pointer",
-    "active:bg-blue-800"
-  );
-}
+domManagement.enableInput();
 
-function enableInput() {
-  input.disabled = false;
-  input.classList.add("bg-transparent", "text-zinc-200", "border-zinc-600");
-  input.classList.remove(
-    "disabled:bg-gray-800",
-    "disabled:text-zinc-500",
-    "disabled:border-gray-700",
-    "disabled:cursor-not-allowed"
-  );
-}
-function disableInput() {
-  input.disabled = true;
-  input.classList.add(
-    "disabled:bg-gray-800",
-    "disabled:text-zinc-500",
-    "disabled:border-gray-700",
-    "disabled:cursor-not-allowed"
-  );
-  input.classList.remove("bg-transparent", "text-zinc-200", "border-zinc-600");
-}
-enableInput();
 
-const arr: number[] = Array.from(Array(101), (_, i) => i);
-const choice = () => chooseNumber();
-let theChoice = choice();
-
-let score = 0;
-let tryCount = 0;
-
-//if (theChoice) cheat.innerHTML = theChoice.toString(); //cheat
-
-type StateResponse = "correct" | "close" | "hot" | "cold";
-
-const responseVerify = (value: number): StateResponse | false => {
+const responseVerify = (value: number): GuessState | undefined => {
   const isCorrect = value === theChoice;
   const isClose = value <= theChoice + 10 && value >= theChoice - 10;
   const isHot = value > theChoice + 10;
   const isCold = value < theChoice - 10;
 
-  if (isCorrect) return "correct";
-  else if (isClose) return "close";
-  else if (isHot) return "hot";
-  else if (isCold) return "cold";
-  return false;
+  const state = isCorrect
+    ? "CORRECT"
+    : isClose
+    ? "CLOSE"
+    : isHot
+    ? "HOT"
+    : isCold
+    ? "COLD"
+    : undefined;
+  return state;
 };
-console.log(spansDegree[0]);
-const stateManagement = (state: StateResponse) => {
-  if (state === "correct") {
-    displayNumber.innerHTML = theChoice.toString();
+
+const sytleAction = (STATE: GuessState) => {
+  const styles = [
+    "border-solid",
+    "animate-bounce",
+    GUESS_BORDER_COLOR[STATE].borderColor,
+  ];
+
+  Array.from(DOM_ELEMENTS.spansDegree).forEach((e, i) => {
+    if (i === GUESS_BORDER_COLOR[STATE].index) {
+      e.classList.add(...styles);
+    } else {
+      e.className = "rounded-full px-2";
+    }
+  });
+};
+
+const stateManagement = (state: GuessState) => {
+  sytleAction(state);
+  if (state === "CORRECT") {
+    DOM_ELEMENTS.displayNumber.innerHTML = theChoice.toString();
     console.log("Trouvé !");
     refreshTryScore(0);
-    input.disabled;
-    disableInput();
-    enableButton();
-    spansDegree[3].classList.add("border-solid", "border-green-500");
-    spansDegree[2].classList.remove("border-solid", "border-yellow-500");
-    spansDegree[1].classList.remove("border-solid", "border-red-500");
-    spansDegree[0].classList.remove("border-solid", "border-blue-500");
-  } else if (state === "close") {
-    console.log("Presque !", theChoice);
+    DOM_ELEMENTS.input.disabled;
+    domManagement.disableInput();
+    domManagement.enableButton();
+    console.log(typeof DOM_ELEMENTS.spansDegree, DOM_ELEMENTS.spansDegree);
+  } else if (state === "CLOSE") {
+    console.log("Presque ! CLOOOOOOOOOOOSE", theChoice);
     refreshTryScore(10);
-    spansDegree[3].classList.remove("border-solid", "border-green-500");
-    spansDegree[2].classList.add("border-solid", "border-yellow-500");
-    spansDegree[1].classList.remove("border-solid", "border-red-500");
-    spansDegree[0].classList.remove("border-solid", "border-blue-500");
-  } else if (state === "hot") {
+  } else if (state === "HOT") {
     console.log("Trop haut !");
     refreshTryScore(50);
-    spansDegree[3].classList.remove("border-solid", "border-green-500");
-    spansDegree[2].classList.remove("border-solid", "border-yellow-500");
-    spansDegree[1].classList.add("border-solid", "border-red-500");
-    spansDegree[0].classList.remove("border-solid", "border-blue-500");
-  } else if (state === "cold") {
+  } else if (state === "COLD") {
     console.log("Trop bas !");
     refreshTryScore(50);
-    spansDegree[3].classList.remove("border-solid", "border-green-500");
-    spansDegree[2].classList.remove("border-solid", "border-yellow-500");
-    spansDegree[1].classList.remove("border-solid", "border-red-500");
-    spansDegree[0].classList.add("border-solid", "border-blue-500");
   }
   return false;
 };
 
-input.addEventListener("keyup", (e: any) => {
-  if (score) spanScore.innerHTML = score.toString();
+DOM_ELEMENTS.input.addEventListener("keyup", (e: any) => {
+  if (SCORE.current)
+    DOM_ELEMENTS.spanScore.innerHTML = SCORE.current.toString();
   if (e.key === "Enter") {
     const val = e.target.value;
     if (val.length < 1 || isNaN(val)) return;
-    const value = parseInt(input.value);
+    const value = parseInt(DOM_ELEMENTS.input.value);
     const result = responseVerify(value);
     result && stateManagement(result);
 
-    input.value = "";
-    console.log("score :", score, "try :", tryCount);
+    DOM_ELEMENTS.input.value = "";
+    console.log("SCORE.current :", SCORE.current, "try :", SCORE.tryCount);
   }
 });
 
-resetBtn.addEventListener("click", (_) => {
+DOM_ELEMENTS.resetBtn.addEventListener("click", (_) => {
   resetGame();
-  disableButton();
-  enableInput();
+  domManagement.disableButton();
+  domManagement.enableInput();
 });
 
-console.log(tryCount, score);
+console.log(SCORE.tryCount, SCORE.current);
