@@ -64,7 +64,7 @@ const stateManagement = (state: GuessState) => {
     domManagement.enableButton();
     console.log(typeof DOM_ELEMENTS.spansDegree, DOM_ELEMENTS.spansDegree);
   } else if (state === "CLOSE") {
-    console.log("Presque ! CLOOOOOOOOOOOSE", theChoice);
+    console.log("Presque !", theChoice);
     refreshTryScore(10);
   } else if (state === "HOT") {
     console.log("Trop haut !");
